@@ -1,4 +1,8 @@
-project('cpp-meson-boilerplate', 'cpp', version : '0.0.1')
+project(
+        'cpp-meson-boilerplate',
+        'cpp',
+        version : '0.0.1',
+        default_options : ['cpp_std=c++14'])
 
 # includes
 include = include_directories('source')
