@@ -1,6 +1,14 @@
 Boilerplate project to start developing in c++ with meson build.
 
-Structure:
+Folder structure:
 
 
 Use:
+
+Running tests
+
+googletest!
+
+Building:
+
+Doxygen:;;
