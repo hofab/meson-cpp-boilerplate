@@ -5,13 +5,27 @@ project(
         default_options : ['cpp_std=c++14'])
 
 #include google-test
-gtest_sp = subproject('gtest')
-gtest = dependency('gtest', main : true)
-gtest_nomain = dependency('gtest', main : false)
+gtest = dependency(
+                    'gtest',
+                    required : false)
+if gtest.found()
+else
+
+#search for gtest in the subjrojects folder
+    gtest_sp = subproject('gtest')
+
+# build the static library because gtest ask for it
+    gtest_lib = static_library('gteststuff', gtest_sp.get_variable('libsources'),
+                include_directories : gtest_sp.get_variable('incdir'))
+
+# get the environmental variables from gtest that are set by meson.wrap
+# includes sources and includes for gtest
+    gtest_inc = gtest_sp.get_variable('incdir')
+endif
 
 # includes
 include = include_directories('source')
-priv_includes = [include]
+priv_includes = [include, gtest_inc]
 priv_sources = ['source/main.cpp',
                 'source/example.cpp']
 
@@ -23,5 +37,10 @@ exe = executable(
                 dependencies : [gtest])
 
 # build the executable
-e = executable('testprog', 'tests/test.cc', dependencies : gtest)
+e = executable(
+        'testprog',
+        'tests/test.cc',
+        link_with : gtest_lib,
+        include_directories : priv_includes,
+        dependencies : gtest)
 test('gtest test', e)
