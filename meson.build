@@ -2,7 +2,7 @@ project(
         'cpp-meson-boilerplate',
         'cpp',
         version : '0.0.1',
-        default_options : ['cpp_std=c++14'])
+        default_options : ['cpp_std=c++17'])
 
 #include google-test
 gtest = dependency(
@@ -31,7 +31,14 @@ priv_sources = ['source/main.cpp',
 
 # build the executable
 exe = executable(
-                'meson-cpp',
+                'cpp-test',
+                [priv_sources],
+                include_directories : priv_includes,
+                dependencies : [gtest])
+
+# build the executable
+exe = executable(
+                'ringbuffer',
                 [priv_sources],
                 include_directories : priv_includes,
                 dependencies : [gtest])
@@ -39,7 +46,7 @@ exe = executable(
 # build the executable
 e = executable(
         'testprog',
-        'tests/test.cc',
+        ['tests/test.cc', 'source/classA.cc'],
         link_with : gtest_lib,
         include_directories : priv_includes,
         dependencies : gtest)
