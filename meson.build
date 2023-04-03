@@ -5,27 +5,12 @@ project(
         default_options : ['cpp_std=c++17'])
 
 #include google-test
-gtest = dependency(
-                    'gtest',
-                    required : false)
-if gtest.found()
-else
-
-#search for gtest in the subjrojects folder
-    gtest_sp = subproject('gtest')
-
-# build the static library because gtest ask for it
-    gtest_lib = static_library('gteststuff', gtest_sp.get_variable('libsources'),
-                include_directories : gtest_sp.get_variable('incdir'))
-
-# get the environmental variables from gtest that are set by meson.wrap
-# includes sources and includes for gtest
-    gtest_inc = gtest_sp.get_variable('incdir')
-endif
+gtest_dep = dependency('gtest', main : true, required : true)
+gmock_dep = dependency('gmock', main : true, required : true)
 
 # includes
 include = include_directories('source')
-priv_includes = [include, gtest_inc]
+priv_includes = [include]
 priv_sources = ['source/main.cpp',
                 'source/example.cpp']
 
@@ -34,20 +19,19 @@ exe = executable(
                 'cpp-test',
                 [priv_sources],
                 include_directories : priv_includes,
-                dependencies : [gtest])
+                dependencies : [gtest_dep])
 
 # build the executable
 exe = executable(
                 'ringbuffer',
                 [priv_sources],
                 include_directories : priv_includes,
-                dependencies : [gtest])
+                dependencies : [gtest_dep])
 
 # build the executable
 e = executable(
         'testprog',
         ['tests/test.cc', 'source/classA.cc'],
-        link_with : gtest_lib,
         include_directories : priv_includes,
-        dependencies : gtest)
+        dependencies : gtest_dep)
 test('gtest test', e)
